@@ -15,20 +15,22 @@ namespace ex4
 
     public:
         Deque();
+        Deque(const Deque &orig);
         ~Deque();
 
-        Node<string>* _getHead();
-        Node<string>* _getTail();
-        size_t _getSize();
+        Node<string>* _getHead() const;
+        Node<string>* _getTail() const;
+        size_t _getSize() const;
         void _setHead(Node<string> *new_head);
         void _setTail(Node<string> *new_tail);
         void _setSize(size_t new_size);
 
-        void _PUSH(string text);
-        void _ENQUEUE(string text);
-        string _POP();
-        string _TOP();
-        string _DEQUEUE();
-        void _ToString();
+        void PUSH(string text);
+        void ENQUEUE(string text);
+        string POP();
+        string TOP() const;
+        string DEQUEUE();
+        void _ToString() const;
+        void _Clear();
     };
 }
