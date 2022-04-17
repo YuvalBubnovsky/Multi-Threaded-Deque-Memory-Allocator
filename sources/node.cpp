@@ -8,9 +8,6 @@ namespace ex4
         this->next = NULL;
         this->prev = NULL;
         this->value = value;
-        /* 
-         * behind the scenes malloc - https://stackoverflow.com/questions/18312658/how-do-strings-allocate-memory-in-c
-         */
     }
 
     template <class T>
@@ -20,13 +17,13 @@ namespace ex4
     }
 
     template <class T>
-    T *Node<T>::_getNext() const
+    Node<T> *Node<T>::_getNext() const
     {
         return this->next;
     }
 
     template <class T>
-    T *Node<T>::_getPrev() const
+    Node<T> *Node<T>::_getPrev() const
     {
         return this->prev;
     }
@@ -43,12 +40,12 @@ namespace ex4
         this->value = new_val;
     }
     template <class T>
-    void Node<T>::_setNext(T *new_next)
+    void Node<T>::_setNext(Node<T> *new_next)
     {
         this->next = new_next;
     }
     template <class T>
-    void Node<T>::_setPrev(T *new_prev)
+    void Node<T>::_setPrev(Node<T> *new_prev)
     {
         this->prev = new_prev;
     }

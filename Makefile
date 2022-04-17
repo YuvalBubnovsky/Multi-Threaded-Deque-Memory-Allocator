@@ -16,6 +16,9 @@ OBJECTS=$(subst sources/,objects/,$(subst .cpp,.o,$(SOURCES)))
 
 run: main
 
+main: $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $^ -o $@
+
 %.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) --compile $< -o $@
 

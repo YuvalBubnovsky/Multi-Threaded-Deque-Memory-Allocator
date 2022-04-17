@@ -7,8 +7,8 @@ namespace ex4
     class Node
     {
     private:
-        T *prev;
-        T *next;
+        Node<T> *prev;
+        Node<T> *next;
         T value;
 
     public:
@@ -16,10 +16,10 @@ namespace ex4
         ~Node();
 
         T _getValue() const;
-        T *_getNext() const;
-        T *_getPrev() const;
+        Node<T> *_getNext() const;
+        Node<T> *_getPrev() const;
         void _setValue(T &new_val);
-        void _setNext(T *new_next);
-        void _setPrev(T *new_prev);
+        void _setNext(Node<T> *new_next);
+        void _setPrev(Node<T> *new_prev);
     };
 }
