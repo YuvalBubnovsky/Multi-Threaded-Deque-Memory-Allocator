@@ -105,7 +105,7 @@ char *read_command(void)
 }
 
 // Thread handler, sends a simple hello message to client, then closes the connection
-void *sock_thread(void *arg)
+void *sock_thread(void *arg)  /* ***************** THREAD HANDLER ***************** */
 {
     int new_sock = *((int *)arg);
     sleep(1);
