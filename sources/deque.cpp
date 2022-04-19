@@ -1,124 +1,151 @@
 #include "deque.hpp"
-using namespace ex4;
 
-namespace ex4
+void _print(pdeq deq)
 {
-    Deque::Deque()
+    /**
+     * @brief prints the object for manual debugging.
+     *
+     */
+    pnode node = deq->head;
+    while (node != NULL)
     {
-        this->head = NULL;
-        this->tail = NULL;
-        this->size = 0;
+        printf("%s, ",node->value);
+        node = node->next;
     }
-    Deque::~Deque()
+    printf("\n");
+}
+void _clear(pdeq deq)
+{
+    /**
+     * @brief clears the entire dequeue object + frees memory
+     *
+     */
+    pnode node = deq->head;
+    pnode to_free = NULL;
+    while (node != NULL)
     {
+        to_free = node;
+        node = node->next;
+        free(to_free->value);
+        free(to_free);
+    }
+    free(deq);
+}
+void _PUSH(pdeq deq, pnode node)
+{
+    /**
+     * @brief inserts the value as the head
+     *
+     */
+
+    if (deq->size == 0)
+    {
+        deq->head = node;
+        deq->tail = node;
+    }
+    else
+    {
+        node->next = deq->head;
+        deq->head->prev = node;
+        deq->head = node;
+    }
+    deq->size += 1;
+}
+pnode _POP(pdeq deq)
+{
+    /**
+     * @brief removes head from the dequeue and returns a pointer to it
+     *
+     */
+    pnode ans = NULL;
+
+    if (deq->size < 2)
+    {
+        if (deq->size == 1)
+        {
+            pnode node = deq->head;  //semantic, can take tail as well.
+            deq->head = NULL;
+            deq->tail = NULL;
+            ans = node;
+        }
+    }
+    else
+    {
+        pnode old_head = deq->head;
+        deq->head = old_head->next;
+        deq->head->prev = NULL;
+        old_head->next = NULL;
+        ans = old_head;
     }
 
-    Node<char *> *Deque::_getHead() const
+    if (ans != NULL)
     {
-        return this->head;
+        deq->size -= 1;
     }
-    Node<char *> *Deque::_getTail() const
-    {
-        return this->tail;
-    }
-    size_t Deque::_getSize() const
-    {
-        return this->size;
-    }
-    
-    /*
-    void Deque::_setHead(Node<string> *new_head){
-        this->head = new_head;
-    }
-    void Deque::_setTail(Node<string> *new_tail){
-        this->tail = new_tail;
-    }
-    void Deque::_setSize(size_t new_size){
-        this->size = new_size;
-    }*/
-
-    void Deque::PUSH(char *text)
-    {
-        /**
-         * @brief inserts the value as the head
-         *
-         */
-
-        Node<char *> *node = new Node<char *>(text); // 'new' is a memory allocation!
-        if (this->size == 0)
-        {
-            this->head = node;
-            this->tail = node;
-        }
-        else
-        {
-            node->_setNext(this->head);
-            this->head->_setPrev(node);
-            this->head = node;
-        }
-        this->size += 1;
-    }
-    void Deque::ENQUEUE(char *text)
-    {
-        /**
-         * @brief inserts the value as the tail
-         *
-         */
-
-        Node<char *> *node = new Node<char *>(text); // 'new' is a memory allocation!
-        if (this->size == 0)
-        {
-            this->head = node;
-            this->tail = node;
-        }
-        else
-        {
-            node->_setPrev(this->tail);
-            this->tail->_setNext(node);
-            this->tail = node;
-        }
-        this->size += 1;
-    }
-    char *Deque::POP()
-    {
-        if (this->size == 0)
-        {
-            std::cout << "ERROR: " << "Empty stack" << std::endl;
-            return NULL;
-        }
-        Node<char *> *node = this->head;
-        Node<char *> *new_head = this->head->_getNext();
-        new_head->_setPrev(NULL);
-        this->head = new_head;
-        return node->_getValue();
+    return ans;
+}
+pnode _TOP(pdeq deq)
+{
+    /**
+     * @brief returns a pointer to the head of the deqeue
+     *
+     */
+    if (deq->size == 0){
+        return NULL;
     }
 
-    char *Deque::DEQUEUE()
+    return deq->head;
+}
+void _ENQUEUE(pdeq deq, pnode node)
+{
+    /**
+     * @brief inserts the value as the tail
+     *
+     */
+    if (deq->size == 0)
     {
-        Node<char *> *node = this->tail;
-        Node<char *> *new_tail = this->tail->_getPrev();
-        new_tail->_setNext(NULL);
-        this->tail = new_tail;
-        return node->_getValue();
+        deq->head = node;
+        deq->tail = node;
     }
-    char *Deque::TOP() const
+    else
     {
-        if (this->size == 0)
+        node->prev = deq->tail;
+        deq->tail->next = node;
+        deq->tail = node;
+    }
+    deq->size += 1;
+}
+pnode _DEQUEUE(pdeq deq)
+{
+    /**
+     * @brief removes tail from the dequeue and returns a pointer to it
+     *
+     */
+
+    pnode ans = NULL;
+
+    if (deq->size < 2)
+    {
+        if (deq->size == 1)
         {
-            std::cout << "ERROR: "
-                      << "Empty stack" << std::endl;
-            return NULL;
+            pnode node = deq->tail; //semantic, can take head as well.
+            deq->head = NULL;
+            deq->tail = NULL;
+            ans = node;
         }
-        std::cout << "OUTPUT: " << this->head->_getValue() << std::endl;
-        return this->head->_getValue();
+    }
+    else
+    {
+        pnode old_tail = deq->tail;
+        deq->tail = old_tail->prev;
+        deq->tail->next = NULL;
+        old_tail->prev = NULL;
+        ans = old_tail;
     }
 
-    void Deque::_ToString() const
+    if (ans != NULL)
     {
-        // TODO: for debugging
+        deq->size -= 1;
     }
-    void Deque::_Clear()
-    {
-        // TODO: for debugging
-    }
+    return ans;
 }

@@ -1,37 +1,27 @@
 #pragma once
-#include <iostream>
-#include "node.hpp"
+#include <stdio.h>
+#include <stdlib.h>
 
-namespace ex4
+typedef struct node *pnode;
+
+typedef struct node
 {
-    class Deque
-    {
-    private:
-        size_t size;
-        Node<char*> *head;
-        Node<char*> *tail;
+    char* value;
+    pnode prev;
+    pnode next;
+}*pnode;
 
-        /*
-        void _setHead(Node<string> *new_head);
-        void _setTail(Node<string> *new_tail);
-        void _setSize(size_t new_size);
-        */
+typedef struct dequeue
+{
+    size_t size;
+    pnode head;
+    pnode tail;
+}*pdeq; 
 
-    public:
-        Deque();
-        ~Deque();
-
-        Node<char*>* _getHead() const;
-        Node<char*>* _getTail() const;
-        size_t _getSize() const;
-        
-
-        void PUSH(char* text);
-        void ENQUEUE(char* text);
-        char* POP();
-        char* TOP() const;
-        char* DEQUEUE();
-        void _ToString() const;
-        void _Clear();
-    };
-}
+void _print(pdeq deq); // control/debugging
+void _clear(pdeq deq); // control/debugging
+void _PUSH(pdeq deq, pnode node);
+pnode _POP(pdeq deq);
+pnode _TOP(pdeq deq);
+void _ENQUEUE(pdeq deq, pnode node);
+pnode _DEQUEUE (pdeq deq);

@@ -18,49 +18,52 @@
 #include <signal.h>
 #include <pthread.h>
 #include "deque.hpp"
-using namespace ex4;
 #define PORT "3490" // the port users will be connecting to
 
 #define BACKLOG 10 // how many pending connections queue will hold
 
-Deque *deq = new Deque(); // singleton
+pdeq deq = (pdeq)malloc(sizeof(pdeq)); // singleton
 
 // Function handlers
 
 char const *func_names[] = {"POP", "TOP", "PUSH", "ENQUEUE", "DEQUEUE"};
 
-int _POP(char **args)
+int POP(char **args)
 {
-    deq->POP();
+    _POP(deq);
     return 1;
 } // TODO: better return the just return 1;
-int _TOP(char **args)
+int TOP(char **args)
 {
-    deq->TOP();
+    _TOP(deq);
     return 1;
 }
-int _ENQUEUE(char **args)
+int ENQUEUE(char **args)
 {
-    deq->ENQUEUE(*args);
+    pnode node = (pnode)malloc(sizeof(pnode));
+    node->value = *args;
+    _ENQUEUE(deq, node);
     return 1;
 }
-int _DEQUEUE(char **args)
+int DEQUEUE(char **args)
 {
-    deq->DEQUEUE();
+    _DEQUEUE(deq);
     return 1;
 }
-int _PUSH(char **args)
+int PUSH(char **args)
 {
-    deq->PUSH(*args);
+    pnode node = (pnode)malloc(sizeof(pnode));
+    node->value = *args;
+    _PUSH(deq, node);
     return 1;
 }
 
 int (*func_implements[])(char **) = {
-    &_PUSH,
-    &_POP,
-    &_ENQUEUE,
-    &_DEQUEUE,
-    &_TOP};
+    &PUSH,
+    &POP,
+    &ENQUEUE,
+    &DEQUEUE,
+    &TOP};
 
 int execute(char **args)
 {
