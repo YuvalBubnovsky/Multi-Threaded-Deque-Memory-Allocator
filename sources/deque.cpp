@@ -83,9 +83,8 @@ namespace ex4
     {
         if (this->size == 0)
         {
-            std::cout << "ERROR: "
-                      << "Empty stack" << std::endl;
-            return "ERROR: Empty stack\n";
+            std::cout << "ERROR: " << "Empty stack" << std::endl;
+            return NULL;
         }
         Node<char *> *node = this->head;
         Node<char *> *new_head = this->head->_getNext();
@@ -108,7 +107,7 @@ namespace ex4
         {
             std::cout << "ERROR: "
                       << "Empty stack" << std::endl;
-            return "ERROR: Empty stack\n";
+            return NULL;
         }
         std::cout << "OUTPUT: " << this->head->_getValue() << std::endl;
         return this->head->_getValue();

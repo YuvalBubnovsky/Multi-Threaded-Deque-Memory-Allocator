@@ -14,7 +14,9 @@ SOURCES=$(wildcard $(SOURCE_PATH)/*.cpp)
 HEADERS=$(wildcard $(SOURCE_PATH)/*.hpp)
 OBJECTS=$(subst sources/,objects/,$(subst .cpp,.o,$(SOURCES)))
 
-run: main
+run: all
+
+all: main
 
 main: $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $^ -o $@

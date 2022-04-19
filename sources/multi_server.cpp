@@ -23,22 +23,37 @@ using namespace ex4;
 
 #define BACKLOG 10 // how many pending connections queue will hold
 
-Deque *deq = new Deque(); //singleton
+Deque *deq = new Deque(); // singleton
 
 // Function handlers
 
-char *func_names[] = {
-    "POP",
-    "TOP",
-    "PUSH",
-    "ENQUEUE",
-    "DEQUEUE"};
+char const *func_names[] = {"POP", "TOP", "PUSH", "ENQUEUE", "DEQUEUE"};
 
-int _POP(char **args) {deq->POP();}
-int _TOP(char **args) {deq->TOP();}
-int _ENQUEUE(char **args) {deq->ENQUEUE(*args);}
-int _DEQUEUE(char **args) {deq->DEQUEUE();}
-int _PUSH(char **args) { deq->PUSH(*args);}
+int _POP(char **args)
+{
+    deq->POP();
+    return 1;
+} // TODO: better return the just return 1;
+int _TOP(char **args)
+{
+    deq->TOP();
+    return 1;
+}
+int _ENQUEUE(char **args)
+{
+    deq->ENQUEUE(*args);
+    return 1;
+}
+int _DEQUEUE(char **args)
+{
+    deq->DEQUEUE();
+    return 1;
+}
+int _PUSH(char **args)
+{
+    deq->PUSH(*args);
+    return 1;
+}
 
 int (*func_implements[])(char **) = {
     &_PUSH,
@@ -73,7 +88,7 @@ char *read_command(void)
     if (getline(&input, &buff_size, stdin) == -1)
     { // getline takes care of all allocations and reallocations while trying to read a string from stdin, for more :https://man7.org/linux/man-pages/man3/getline.3.html
         if (feof(stdin))
-        { 
+        {
             // we chillin.
         }
         else
@@ -91,7 +106,7 @@ void *sock_thread(void *arg)
 {
     int new_sock = *((int *)arg);
     sleep(1);
-    send(new_sock,"Hello from server",18,0);
+    send(new_sock, "Hello from server", 18, 0);
     close(new_sock);
     pthread_exit(NULL);
 }
@@ -214,17 +229,17 @@ int main(void)
         {
             printf("ERROR: Failed To Create Thread!\n");
         }
-        
+
         // Loop over our threads array and join all completed threads, freeing up resources
-        if(i>=10){
+        if (i >= 10)
+        {
             i = 0;
-            while(i<10){
-                pthread_join(new_thread[i++],NULL);
+            while (i < 10)
+            {
+                pthread_join(new_thread[i++], NULL);
             }
             i = 0;
         }
-        
-        
     }
 
     return 0;
