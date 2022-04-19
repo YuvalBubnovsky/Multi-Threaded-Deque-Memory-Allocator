@@ -18,7 +18,12 @@
 #include <signal.h>
 #include <pthread.h>
 #include "deque.hpp"
+
 #define PORT "3490" // the port users will be connecting to
+
+// Delimiter definition needed for parsing, this will be passed to strtok()
+#define DELIM " \t\r\n\a"
+#define TOKEN_SIZE 256
 
 #define BACKLOG 10 // how many pending connections queue will hold
 
@@ -65,6 +70,31 @@ int (*func_implements[])(char **) = {
     &DEQUEUE,
     &TOP};
 
+char **parse_args(char *input)
+{
+    int buff_size = TOKEN_SIZE;
+    int pos = 0;
+
+    char *token;
+    char **tokens = (char **)malloc(sizeof(char *) * buff_size);
+    if (tokens == NULL)
+    {
+        fprintf(stderr, "Couldn't Allocate For Tokens!\n");
+        exit(1);
+    }
+
+    token = strtok(input, DELIM);
+    while (token != NULL)
+    {
+        tokens[pos] = token;
+        pos++;
+
+        token = strtok(NULL, DELIM); // searching for more tokens in the string
+    }
+    tokens[pos] = NULL;
+    return tokens;
+}
+
 int execute(char **args)
 {
     if (args[0] == NULL)
@@ -83,33 +113,25 @@ int execute(char **args)
     return 1;
 }
 
-char *read_command(void)
+// Thread handler, sends a simple hello message to client, then closes the connection
+void *sock_thread(void *arg) /* ***************** THREAD HANDLER ***************** */
 {
-    char *input = NULL;   // we set to NULL so getline will allocate a buffer for storing the line
-    size_t buff_size = 0; // no need to allocate an actual number here, getline allocates a size as needed
-
-    if (getline(&input, &buff_size, stdin) == -1)
-    { // getline takes care of all allocations and reallocations while trying to read a string from stdin, for more :https://man7.org/linux/man-pages/man3/getline.3.html
-        if (feof(stdin))
+    int n;
+    char buffer[2048];
+    char **args;
+    int new_sock = *((int *)arg);
+    bzero(buffer, 2048);
+    printf("New connection from %d", new_sock); // DEBUG ONLY
+    sleep(1);
+    while ((n = recv(new_sock, &buffer, sizeof(buffer), 0)) > 0)
+    {
+        if (n == -1)
         {
-            // we chillin.
-        }
-        else
-        {
-            perror("getline");
-            exit(1);
+            perror("recv");
         }
     }
-
-    return input;
-}
-
-// Thread handler, sends a simple hello message to client, then closes the connection
-void *sock_thread(void *arg)  /* ***************** THREAD HANDLER ***************** */
-{
-    int new_sock = *((int *)arg);
-    sleep(1);
-    send(new_sock, "Hello from server", 18, 0);
+    args = parse_args(buffer);
+    execute(args);
     close(new_sock);
     pthread_exit(NULL);
 }
