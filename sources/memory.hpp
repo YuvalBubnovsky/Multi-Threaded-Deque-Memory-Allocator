@@ -1,10 +1,14 @@
+/**
+ * Implementation based on https://danluu.com/malloc-tutorial
+ */
+
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
 
 #define CHUNK_SIZE sizeof(struct meta_data)
 #define ALIGN_SIZE 2048
-#define ALIGN(size) (((size) + (ALIGN_SIZE - 1)) & ~(ALIGN_SIZE - 1))
+#define ALIGN(size) (((size) + (ALIGN_SIZE - 1)) & ~(ALIGN_SIZE - 1)) //Idea taken from https://github.com/miguelperes/custom-malloc/blob/master/mymemory.h
 
 typedef struct meta_data
 {

@@ -8,7 +8,8 @@ void _print(pdeq deq)
      *
      */
     pnode node = deq->head;
-    printf("DEBUG: The Current Dequeue is: ");
+    int t = deq->size;
+    printf("DEBUG: The Current Dequeue is of size %d: ",t);
     while (node != NULL)
     {
         printf("%s, ",node->value);
@@ -16,6 +17,7 @@ void _print(pdeq deq)
     }
     printf("\n");
 }
+
 void _clear(pdeq deq)
 {
     /**
@@ -33,12 +35,19 @@ void _clear(pdeq deq)
     }
     my_free(deq);
 }
+
 void _PUSH(pdeq deq, pnode node)
 {
     /**
      * @brief inserts the value as the head
      *
      */
+
+    /* making sure node ends aren't junk */
+    node->next = NULL;
+    node->prev = NULL;
+    /* ********************************* */
+
 
     if (deq->size == 0)
     {
@@ -53,6 +62,7 @@ void _PUSH(pdeq deq, pnode node)
     }
     deq->size += 1;
 }
+
 pnode _POP(pdeq deq)
 {
     /**
@@ -86,6 +96,7 @@ pnode _POP(pdeq deq)
     }
     return ans;
 }
+
 pnode _TOP(pdeq deq)
 {
     /**
@@ -98,12 +109,19 @@ pnode _TOP(pdeq deq)
 
     return deq->head;
 }
+
 void _ENQUEUE(pdeq deq, pnode node)
 {
     /**
      * @brief inserts the value as the tail
      *
      */
+
+    /* making sure node ends aren't junk */
+    node->next = NULL;
+    node->prev = NULL;
+    /* ********************************* */
+
     if (deq->size == 0)
     {
         deq->head = node;
@@ -117,6 +135,7 @@ void _ENQUEUE(pdeq deq, pnode node)
     }
     deq->size += 1;
 }
+
 pnode _DEQUEUE(pdeq deq)
 {
     /**
