@@ -34,19 +34,31 @@ char const *func_names[] = {"POP", "TOP", "PUSH", "ENQUEUE", "DEQUEUE"};
 
 int POP(char **args)
 {
+    pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_lock(&mut);
+
     _POP(deq);
-    printf("Got POP Request\n");
+
+    printf("DEBUG: Got POP Request\n");
+    pthread_mutex_unlock(&mut);
+
     return 1;
 }
 
 int TOP(char **args)
 {
+    pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_lock(&mut);
+
     pnode top = _TOP(deq);
-    printf("Got TOP Request\n");
+
+    printf("DEBUG: Got TOP Request\n");
     if (top != NULL)
     {
         printf("%s\n", top->value);
     }
+
+    pthread_mutex_unlock(&mut);
 
     return 1;
 }
@@ -54,29 +66,47 @@ int TOP(char **args)
 // TODO: Add while loop to create new nodes as long as we have args[i] != NULL to make sure we have inserted all data
 int PUSH(char **args)
 {
+    pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_lock(&mut);
+
     pnode node = (pnode)malloc(sizeof(pnode));
     node->value = args[1];
-    printf("Got PUSH Request\n");
+
+    printf("DEBUG: Got PUSH Request\n");
     printf("%s\n", args[1]);
+
     _PUSH(deq, node);
+    pthread_mutex_unlock(&mut);
+
     return 1;
 }
 
 // TODO: Add while loop to create new nodes as long as we have args[i] != NULL to make sure we have inserted all data
 int ENQUEUE(char **args)
 {
+    pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_lock(&mut);
+
     pnode node = (pnode)malloc(sizeof(pnode));
     node->value = args[1];
-    printf("Got ENQUEUE Request\n");
+
+    printf("DEBUG: Got ENQUEUE Request\n");
     printf("%s\n", args[1]);
 
     _ENQUEUE(deq, node);
+    pthread_mutex_unlock(&mut);
+
     return 1;
 }
 int DEQUEUE(char **args)
 {
+    pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_lock(&mut);
+
     _DEQUEUE(deq);
-    printf("Got DEQUEUE Request\n");
+    printf("DEBUG: Got DEQUEUE Request\n");
+
+    pthread_mutex_unlock(&mut);
 
     return 1;
 }
@@ -138,7 +168,7 @@ void *sock_thread(void *arg) /* ***************** THREAD HANDLER ***************
     char **args;
     int new_sock = *((int *)arg);
     bzero(buffer, 2048);
-    printf("New connection from %d\n", new_sock); // DEBUG ONLY
+    printf("DEBUG: New connection from %d\n", new_sock); // DEBUG ONLY
     sleep(1);
 
     while ((n = recv(new_sock, &buffer, sizeof(buffer), 0)) > 0)

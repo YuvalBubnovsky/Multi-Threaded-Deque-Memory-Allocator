@@ -78,9 +78,6 @@ void *send_thread_handler(void *arg)
     while (1)
     {
         commands = read_command();
-        if(strcmp(commands,"EXIT")==0){
-            break;
-        }
         if (send(n_sock, commands, strlen(commands), 0) == -1)
         {
             perror("send");
