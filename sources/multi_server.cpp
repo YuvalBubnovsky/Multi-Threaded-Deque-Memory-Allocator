@@ -26,6 +26,8 @@
 
 pdeq deq = (pdeq)malloc(sizeof(pdeq)); // singleton
 
+// TODO: Add function to send output to client
+
 // Function handlers
 
 char const *func_names[] = {"POP", "TOP", "PUSH", "ENQUEUE", "DEQUEUE"};
@@ -35,7 +37,8 @@ int POP(char **args)
     _POP(deq);
     printf("Got POP Request\n");
     return 1;
-} // TODO: better return the just return 1;
+}
+
 int TOP(char **args)
 {
     pnode top = _TOP(deq);
@@ -48,6 +51,7 @@ int TOP(char **args)
     return 1;
 }
 
+// TODO: Add while loop to create new nodes as long as we have args[i] != NULL to make sure we have inserted all data
 int PUSH(char **args)
 {
     pnode node = (pnode)malloc(sizeof(pnode));
@@ -58,6 +62,7 @@ int PUSH(char **args)
     return 1;
 }
 
+// TODO: Add while loop to create new nodes as long as we have args[i] != NULL to make sure we have inserted all data
 int ENQUEUE(char **args)
 {
     pnode node = (pnode)malloc(sizeof(pnode));

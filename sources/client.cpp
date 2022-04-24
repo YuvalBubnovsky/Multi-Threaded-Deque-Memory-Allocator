@@ -17,6 +17,8 @@
 
 #define MAXDATASIZE 100 // max number of bytes we can get at once
 
+// TODO: add checks for valid input (no empty PUSH/ENQUEUE)
+
 // get sockaddr, IPv4 or IPv6:
 void *get_in_addr(struct sockaddr *sa)
 {
