@@ -55,7 +55,7 @@ void *recv_thread_handler(void *arg)
     bzero(buffer, 2048);
     int n;
     int new_sock = *((int *)arg);
-    while ((n = recv(new_sock, buffer, 2048, 0)) > 0)
+    while ((n = recv(new_sock, buffer, 2048, 0)) != -1)
     {
         if (n == -1)
         {
@@ -71,12 +71,19 @@ void *recv_thread_handler(void *arg)
 void *send_thread_handler(void *arg)
 {
     char *commands;
-    commands = read_command();
     int n_sock = *((int *)arg);
     // TODO: add flag control (?) and pthread exit
-    if (send(n_sock, commands, strlen(commands), 0) == -1)
+    while (1)
     {
-        perror("send");
+        commands = read_command();
+        if(strcmp(commands,"EXIT")==0){
+            break;
+        }
+        if (send(n_sock, commands, strlen(commands), 0) == -1)
+        {
+            perror("send");
+        }
+        sleep(1);
     }
     pthread_exit(NULL);
 }
@@ -137,11 +144,11 @@ int main(int argc, char *argv[])
     printf("client: connecting to %s\n", s);
     freeaddrinfo(servinfo); // all done with this structure
 
-    pthread_create(&new_thread[0], NULL, recv_thread_handler, NULL);
-    pthread_create(&new_thread[1], NULL, send_thread_handler, NULL);
+    pthread_create(&new_thread[0], NULL, recv_thread_handler, &sockfd);
+    pthread_create(&new_thread[1], NULL, send_thread_handler, &sockfd);
 
-    pthread_join(new_thread[0],NULL);
-    pthread_join(new_thread[1],NULL);
+    pthread_join(new_thread[0], NULL);
+    pthread_join(new_thread[1], NULL);
 
     close(sockfd);
 

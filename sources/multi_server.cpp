@@ -1,7 +1,4 @@
-/*
-** server.c -- a stream socket server demo
-*/
-#define NUM_OF_FUNC 8
+#define NUM_OF_FUNC 5
 #define _POSIX_C_SOURCE 199309
 #define _XOPEN_SOURCE 600
 #include <stdio.h>
@@ -36,39 +33,55 @@ char const *func_names[] = {"POP", "TOP", "PUSH", "ENQUEUE", "DEQUEUE"};
 int POP(char **args)
 {
     _POP(deq);
+    printf("Got POP Request\n");
     return 1;
 } // TODO: better return the just return 1;
 int TOP(char **args)
 {
-    _TOP(deq);
+    pnode top = _TOP(deq);
+    printf("Got TOP Request\n");
+    if (top != NULL)
+    {
+        printf("%s\n", top->value);
+    }
+
     return 1;
 }
+
+int PUSH(char **args)
+{
+    pnode node = (pnode)malloc(sizeof(pnode));
+    node->value = args[1];
+    printf("Got PUSH Request\n");
+    printf("%s\n", args[1]);
+    _PUSH(deq, node);
+    return 1;
+}
+
 int ENQUEUE(char **args)
 {
     pnode node = (pnode)malloc(sizeof(pnode));
-    node->value = *args;
+    node->value = args[1];
+    printf("Got ENQUEUE Request\n");
+    printf("%s\n", args[1]);
+
     _ENQUEUE(deq, node);
     return 1;
 }
 int DEQUEUE(char **args)
 {
     _DEQUEUE(deq);
-    return 1;
-}
-int PUSH(char **args)
-{
-    pnode node = (pnode)malloc(sizeof(pnode));
-    node->value = *args;
-    _PUSH(deq, node);
+    printf("Got DEQUEUE Request\n");
+
     return 1;
 }
 
 int (*func_implements[])(char **) = {
-    &PUSH,
     &POP,
+    &TOP,
+    &PUSH,
     &ENQUEUE,
-    &DEQUEUE,
-    &TOP};
+    &DEQUEUE};
 
 char **parse_args(char *input)
 {
@@ -113,7 +126,6 @@ int execute(char **args)
     return 1;
 }
 
-// Thread handler, sends a simple hello message to client, then closes the connection
 void *sock_thread(void *arg) /* ***************** THREAD HANDLER ***************** */
 {
     int n;
@@ -121,17 +133,19 @@ void *sock_thread(void *arg) /* ***************** THREAD HANDLER ***************
     char **args;
     int new_sock = *((int *)arg);
     bzero(buffer, 2048);
-    printf("New connection from %d", new_sock); // DEBUG ONLY
+    printf("New connection from %d\n", new_sock); // DEBUG ONLY
     sleep(1);
+
     while ((n = recv(new_sock, &buffer, sizeof(buffer), 0)) > 0)
     {
         if (n == -1)
         {
             perror("recv");
         }
+        args = parse_args(buffer);
+        execute(args);
     }
-    args = parse_args(buffer);
-    execute(args);
+
     close(new_sock);
     pthread_exit(NULL);
 }
