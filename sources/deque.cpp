@@ -1,4 +1,5 @@
 #include "deque.hpp"
+#include "memory.hpp"
 
 void _print(pdeq deq)
 {
@@ -7,6 +8,7 @@ void _print(pdeq deq)
      *
      */
     pnode node = deq->head;
+    printf("DEBUG: The Current Dequeue is: ");
     while (node != NULL)
     {
         printf("%s, ",node->value);
@@ -26,10 +28,10 @@ void _clear(pdeq deq)
     {
         to_free = node;
         node = node->next;
-        free(to_free->value);
-        free(to_free);
+        my_free(to_free->value);
+        my_free(to_free);
     }
-    free(deq);
+    my_free(deq);
 }
 void _PUSH(pdeq deq, pnode node)
 {

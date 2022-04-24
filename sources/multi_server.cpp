@@ -2,7 +2,7 @@
 #define _POSIX_C_SOURCE 199309
 #define _XOPEN_SOURCE 600
 #include <stdio.h>
-#include <stdlib.h>
+//#include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
@@ -15,6 +15,7 @@
 #include <signal.h>
 #include <pthread.h>
 #include "deque.hpp"
+#include "memory.hpp"
 
 #define PORT "3490" // the port users will be connecting to
 
@@ -24,7 +25,7 @@
 
 #define BACKLOG 10 // how many pending connections queue will hold
 
-pdeq deq = (pdeq)malloc(sizeof(pdeq)); // singleton
+pdeq deq = (pdeq)my_malloc(sizeof(pdeq)); // singleton
 
 // TODO: Add function to send output to client
 
@@ -38,6 +39,7 @@ int POP(char **args)
     pthread_mutex_lock(&mut);
 
     _POP(deq);
+    _print(deq); // Debugging
 
     printf("DEBUG: Got POP Request\n");
     pthread_mutex_unlock(&mut);
@@ -51,6 +53,7 @@ int TOP(char **args)
     pthread_mutex_lock(&mut);
 
     pnode top = _TOP(deq);
+    _print(deq); // Debugging
 
     printf("DEBUG: Got TOP Request\n");
     if (top != NULL)
@@ -69,13 +72,14 @@ int PUSH(char **args)
     pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_lock(&mut);
 
-    pnode node = (pnode)malloc(sizeof(pnode));
+    pnode node = (pnode)my_malloc(sizeof(pnode));
     node->value = args[1];
 
     printf("DEBUG: Got PUSH Request\n");
-    printf("%s\n", args[1]);
 
     _PUSH(deq, node);
+    _print(deq); // Debugging
+
     pthread_mutex_unlock(&mut);
 
     return 1;
@@ -87,13 +91,14 @@ int ENQUEUE(char **args)
     pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_lock(&mut);
 
-    pnode node = (pnode)malloc(sizeof(pnode));
+    pnode node = (pnode)my_malloc(sizeof(pnode));
     node->value = args[1];
 
     printf("DEBUG: Got ENQUEUE Request\n");
-    printf("%s\n", args[1]);
 
     _ENQUEUE(deq, node);
+    _print(deq); // Debugging
+
     pthread_mutex_unlock(&mut);
 
     return 1;
@@ -105,6 +110,7 @@ int DEQUEUE(char **args)
 
     _DEQUEUE(deq);
     printf("DEBUG: Got DEQUEUE Request\n");
+    _print(deq); // Debugging
 
     pthread_mutex_unlock(&mut);
 
@@ -124,7 +130,7 @@ char **parse_args(char *input)
     int pos = 0;
 
     char *token;
-    char **tokens = (char **)malloc(sizeof(char *) * buff_size);
+    char **tokens = (char **)my_malloc(sizeof(char *) * buff_size);
     if (tokens == NULL)
     {
         fprintf(stderr, "Couldn't Allocate For Tokens!\n");
