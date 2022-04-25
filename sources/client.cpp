@@ -17,7 +17,7 @@
 
 #define MAXDATASIZE 100 // max number of bytes we can get at once
 
-// TODO: add checks for valid input (no empty PUSH/ENQUEUE)
+// TODO: add documentation
 
 // get sockaddr, IPv4 or IPv6:
 void *get_in_addr(struct sockaddr *sa)
@@ -66,7 +66,6 @@ void *recv_thread_handler(void *arg)
         printf("%s\n", buffer);
         bzero(buffer, 2048);
     }
-    // TODO: Add pthread exit and flag for control
     pthread_exit(NULL);
 }
 
@@ -74,7 +73,6 @@ void *send_thread_handler(void *arg)
 {
     char *commands;
     int n_sock = *((int *)arg);
-    // TODO: add flag control (?) and pthread exit
     while (1)
     {
         commands = read_command();

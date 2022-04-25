@@ -25,9 +25,11 @@
 
 #define BACKLOG 10 // how many pending connections queue will hold
 
+// Defining global queue and sending socket for client globally
 pdeq deq = (pdeq)my_malloc(sizeof(pdeq)); // singleton
 int new_sock = 0;
 
+// TODO: add checks for valid input (no empty PUSH/ENQUEUE)
 
 // Function handlers
 
