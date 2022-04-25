@@ -53,12 +53,11 @@ int TOP(char **args)
     pthread_mutex_lock(&mut);
 
     pnode top = _TOP(deq);
-    _print(deq); // Debugging
 
     printf("DEBUG: Got TOP Request\n");
     if (top != NULL)
     {
-        printf("%s\n", top->value);
+        printf("OUTPUT: Top Of The Stack Is: %s\n", top->value);
     }
 
     pthread_mutex_unlock(&mut);
@@ -148,10 +147,6 @@ char **parse_args(char *input)
         token = strtok(NULL, DELIM); // searching for more tokens in the string
     }
     tokens[pos] = NULL;
-    printf("DEBUG: tokens [0] - %s\n", tokens[0]);
-    printf("DEBUG: tokens [1] - %s\n", tokens[1]);
-    printf("DEBUG: tokens [2] - %s\n", tokens[2]);
-
     return tokens;
 }
 
