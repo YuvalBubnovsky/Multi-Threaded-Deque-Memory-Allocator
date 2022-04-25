@@ -26,8 +26,8 @@
 #define BACKLOG 10 // how many pending connections queue will hold
 
 pdeq deq = (pdeq)my_malloc(sizeof(pdeq)); // singleton
+int new_sock = 0;
 
-// TODO: Add function to send output to client
 
 // Function handlers
 
@@ -49,6 +49,7 @@ int POP(char **args)
 
 int TOP(char **args)
 {
+    char buf[2048];
     pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_lock(&mut);
 
@@ -60,20 +61,22 @@ int TOP(char **args)
         printf("OUTPUT: Top Of The Stack Is: %s\n", top->value);
     }
 
+    strcpy(buf, "OUTPUT: ");
+    strcat(buf, top->value);
+    send(new_sock, buf, strlen(buf), 0);
     pthread_mutex_unlock(&mut);
 
     return 1;
 }
 
-// TODO: Add while loop to create new nodes as long as we have args[i] != NULL to make sure we have inserted all data
 int PUSH(char **args)
 {
     pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_lock(&mut);
 
     pnode node = (pnode)my_malloc(sizeof(pnode));
-    node->value = (char*)my_malloc(sizeof(char) * strlen(args[1]));
-    memcpy(node->value,args[1],strlen(args[1]));
+    node->value = (char *)my_malloc(sizeof(char) * strlen(args[1]));
+    memcpy(node->value, args[1], strlen(args[1]));
 
     printf("DEBUG: Got PUSH Request\n");
 
@@ -85,15 +88,14 @@ int PUSH(char **args)
     return 1;
 }
 
-// TODO: Add while loop to create new nodes as long as we have args[i] != NULL to make sure we have inserted all data
 int ENQUEUE(char **args)
 {
     pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_lock(&mut);
 
     pnode node = (pnode)my_malloc(sizeof(pnode));
-    node->value = (char*)my_malloc(sizeof(char) * strlen(args[1]));
-    memcpy(node->value,args[1],strlen(args[1]));
+    node->value = (char *)my_malloc(sizeof(char) * strlen(args[1]));
+    memcpy(node->value, args[1], strlen(args[1]));
 
     printf("DEBUG: Got ENQUEUE Request\n");
 
@@ -173,7 +175,7 @@ void *sock_thread(void *arg) /* ***************** THREAD HANDLER ***************
     int n;
     char buffer[2048];
     char **args;
-    int new_sock = *((int *)arg);
+    new_sock = *((int *)arg);
     bzero(buffer, 2048);
     printf("DEBUG: New connection from %d\n", new_sock); // DEBUG ONLY
     sleep(1);
