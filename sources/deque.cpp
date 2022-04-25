@@ -7,12 +7,14 @@ void _print(pdeq deq)
      * @brief prints the object for manual debugging.
      *
      */
+
     pnode node = deq->head;
     int t = deq->size;
-    printf("DEBUG: The Current Dequeue is of size %d: ",t);
+    printf("DEBUG: The Current Dequeue is of size %d: ", t);
     while (node != NULL)
     {
-        printf("%s, ",node->value);
+        printf("%s, ", node->value);
+
         node = node->next;
     }
     printf("\n");
@@ -48,7 +50,6 @@ void _PUSH(pdeq deq, pnode node)
     node->prev = NULL;
     /* ********************************* */
 
-
     if (deq->size == 0)
     {
         deq->head = node;
@@ -75,7 +76,7 @@ pnode _POP(pdeq deq)
     {
         if (deq->size == 1)
         {
-            pnode node = deq->head;  //semantic, can take tail as well.
+            pnode node = deq->head; // semantic, can take tail as well.
             deq->head = NULL;
             deq->tail = NULL;
             ans = node;
@@ -103,7 +104,8 @@ pnode _TOP(pdeq deq)
      * @brief returns a pointer to the head of the deqeue
      *
      */
-    if (deq->size == 0){
+    if (deq->size == 0)
+    {
         return NULL;
     }
 
@@ -149,7 +151,7 @@ pnode _DEQUEUE(pdeq deq)
     {
         if (deq->size == 1)
         {
-            pnode node = deq->tail; //semantic, can take head as well.
+            pnode node = deq->tail; // semantic, can take head as well.
             deq->head = NULL;
             deq->tail = NULL;
             ans = node;

@@ -73,7 +73,8 @@ int PUSH(char **args)
     pthread_mutex_lock(&mut);
 
     pnode node = (pnode)my_malloc(sizeof(pnode));
-    node->value = args[1];
+    node->value = (char*)my_malloc(sizeof(char) * strlen(args[1]));
+    memcpy(node->value,args[1],strlen(args[1]));
 
     printf("DEBUG: Got PUSH Request\n");
 
@@ -92,7 +93,8 @@ int ENQUEUE(char **args)
     pthread_mutex_lock(&mut);
 
     pnode node = (pnode)my_malloc(sizeof(pnode));
-    node->value = args[1];
+    node->value = (char*)my_malloc(sizeof(char) * strlen(args[1]));
+    memcpy(node->value,args[1],strlen(args[1]));
 
     printf("DEBUG: Got ENQUEUE Request\n");
 
@@ -146,6 +148,10 @@ char **parse_args(char *input)
         token = strtok(NULL, DELIM); // searching for more tokens in the string
     }
     tokens[pos] = NULL;
+    printf("DEBUG: tokens [0] - %s\n", tokens[0]);
+    printf("DEBUG: tokens [1] - %s\n", tokens[1]);
+    printf("DEBUG: tokens [2] - %s\n", tokens[2]);
+
     return tokens;
 }
 
@@ -215,6 +221,12 @@ void *get_in_addr(struct sockaddr *sa)
 
 int main(void)
 {
+
+    // Setting initial values for Queue
+    deq->head = NULL;
+    deq->size = 0;
+    deq->tail = NULL;
+
     int sockfd, new_fd; // listen on sock_fd, new connection on new_fd
     struct addrinfo hints, *servinfo, *p;
     struct sockaddr_storage their_addr; // connector's address information
