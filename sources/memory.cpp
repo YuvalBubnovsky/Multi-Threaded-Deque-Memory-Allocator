@@ -1,5 +1,11 @@
 #include "memory.hpp"
 
+
+// Custom memory manager, using greedy method of searching a free space on the heap
+// Once an allocation request is submitted.
+
+// Reference - https://nyu-cso.github.io/notes/14-Dynamic_Allocator.pdf
+
 void *global_base = NULL;
 
 chunk *get_chunk_ptr(void *ptr)
@@ -7,6 +13,7 @@ chunk *get_chunk_ptr(void *ptr)
     return (chunk *)ptr - 1;
 }
 
+// Find the first free chunk in the heap
 chunk *find_free_block(chunk **last, size_t size)
 {
     chunk *current = static_cast<chunk *>(global_base);
@@ -17,6 +24,7 @@ chunk *find_free_block(chunk **last, size_t size)
     }
     return current;
 }
+
 
 chunk *request_space(chunk *last, size_t size)
 {
@@ -37,7 +45,7 @@ chunk *request_space(chunk *last, size_t size)
     return block;
 }
 
-void *my_malloc(size_t _size)
+void *malloc(size_t _size)
 {
     chunk *block;
     size_t size = ALIGN(_size); // Aligning size to 16 bits
@@ -75,18 +83,18 @@ void *my_malloc(size_t _size)
         }
     }
 
-    return (block + 1);
+    return (block + 1); // Since we finished at the last allocated block, increment pointer to point to a free one.
 }
 
-void *my_calloc(size_t nelem, size_t elsize)
+void *calloc(size_t no_elements, size_t element_size)
 {
-    size_t size = nelem * elsize;
-    void *ptr = my_malloc(size);
+    size_t size = no_elements * element_size;
+    void *ptr = malloc(size); // neat trick to write less code, allocate the space requested and use a built-in function to zero it
     bzero(ptr, size);
     return ptr;
 }
 
-void my_free(void *ptr)
+void free(void *ptr)
 {
     if (!ptr)
     {
@@ -94,5 +102,5 @@ void my_free(void *ptr)
     }
 
     chunk *chunk_ptr = get_chunk_ptr(ptr);
-    chunk_ptr->free = 1;
+    chunk_ptr->free = 1; // set the free flag so next requests can use this block and overwrite it.
 }

@@ -8,8 +8,9 @@
 
 #define CHUNK_SIZE sizeof(struct meta_data)
 #define ALIGN_SIZE 2048
-#define ALIGN(size) (((size) + (ALIGN_SIZE - 1)) & ~(ALIGN_SIZE - 1)) //Idea taken from https://github.com/miguelperes/custom-malloc/blob/master/mymemory.h
+#define ALIGN(size) (((size) + (ALIGN_SIZE - 1)) & ~(ALIGN_SIZE - 1)) // Idea taken from https://github.com/miguelperes/custom-malloc/blob/master/mymemory.h
 
+// Definition for meta-data of each block/chunk we want to allocate
 typedef struct meta_data
 {
     size_t size;
@@ -17,9 +18,9 @@ typedef struct meta_data
     int free;
 } chunk;
 
-void *my_malloc(size_t _size);
-void *my_calloc(size_t nelem, size_t elsize);
-void my_free(void *ptr);
+void *malloc(size_t _size);
+void *calloc(size_t nelem, size_t elsize);
+void free(void *ptr);
 chunk *find_free(chunk **last, size_t size);
 chunk *os_request(chunk *last, size_t size);
 chunk *get_chunk_ptr(void *ptr);

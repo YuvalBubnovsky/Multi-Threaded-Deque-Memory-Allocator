@@ -32,10 +32,10 @@ void _clear(pdeq deq)
     {
         to_free = node;
         node = node->next;
-        my_free(to_free->value);
-        my_free(to_free);
+        free(to_free->value);
+        free(to_free);
     }
-    my_free(deq);
+    free(deq);
 }
 
 void _PUSH(pdeq deq, pnode node)

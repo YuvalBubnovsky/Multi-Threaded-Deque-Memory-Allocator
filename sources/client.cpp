@@ -51,6 +51,7 @@ char *read_command(void)
     return input;
 }
 
+// recieiving data from server will be in a seperate thread
 void *recv_thread_handler(void *arg)
 {
     char buffer[2048];
@@ -69,6 +70,7 @@ void *recv_thread_handler(void *arg)
     pthread_exit(NULL);
 }
 
+// sending data to server wll be in a seperate thread
 void *send_thread_handler(void *arg)
 {
     char *commands;

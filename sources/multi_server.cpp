@@ -26,10 +26,8 @@
 #define BACKLOG 10 // how many pending connections queue will hold
 
 // Defining global queue and sending socket for client globally
-pdeq deq = (pdeq)my_malloc(sizeof(pdeq)); // singleton
+pdeq deq = (pdeq)malloc(sizeof(pdeq)); // singleton
 int new_sock = 0;
-
-// TODO: add checks for valid input (no empty PUSH/ENQUEUE)
 
 // Function handlers
 
@@ -51,11 +49,21 @@ int POP(char **args)
 
 int TOP(char **args)
 {
+    printf("DEBUG: Got TOP Request\n");
+
     char buf[2048];
     pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_lock(&mut);
 
     pnode top = _TOP(deq);
+
+    if (top == NULL)
+    {
+        strcpy(buf, "DEQUE IS EMPTY! CANNOT RETRIEVE TOP!");
+        send(new_sock, buf, strlen(buf), 0);
+        pthread_mutex_unlock(&mut);
+        return 1;
+    }
 
     printf("DEBUG: Got TOP Request\n");
     if (top != NULL)
@@ -76,8 +84,14 @@ int PUSH(char **args)
     pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_lock(&mut);
 
-    pnode node = (pnode)my_malloc(sizeof(pnode));
-    node->value = (char *)my_malloc(sizeof(char) * strlen(args[1]));
+    if (args[1] == NULL)
+    {
+        printf("ERROR: PUSH requires a value to push\n");
+        return 1;
+    }
+
+    pnode node = (pnode)malloc(sizeof(pnode));
+    node->value = (char *)malloc(sizeof(char) * strlen(args[1]));
     memcpy(node->value, args[1], strlen(args[1]));
 
     printf("DEBUG: Got PUSH Request\n");
@@ -95,8 +109,14 @@ int ENQUEUE(char **args)
     pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_lock(&mut);
 
-    pnode node = (pnode)my_malloc(sizeof(pnode));
-    node->value = (char *)my_malloc(sizeof(char) * strlen(args[1]));
+    if (args[1] == NULL)
+    {
+        printf("ERROR: ENQUEUE requires a value to enqueue\n");
+        return 1;
+    }
+
+    pnode node = (pnode)malloc(sizeof(pnode));
+    node->value = (char *)malloc(sizeof(char) * strlen(args[1]));
     memcpy(node->value, args[1], strlen(args[1]));
 
     printf("DEBUG: Got ENQUEUE Request\n");
@@ -135,7 +155,7 @@ char **parse_args(char *input)
     int pos = 0;
 
     char *token;
-    char **tokens = (char **)my_malloc(sizeof(char *) * buff_size);
+    char **tokens = (char **)malloc(sizeof(char *) * buff_size);
     if (tokens == NULL)
     {
         fprintf(stderr, "Couldn't Allocate For Tokens!\n");
